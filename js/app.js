@@ -1,10 +1,12 @@
 'use strict';
 
-
-
-const allImages = []
-
-const Images = function(image_url, title, description, keyword, horns){
+const allImages = [];
+let include = [];
+let imageArr = [];
+let flag = true;
+let filePath;
+let fileType;
+const Images = function (image_url, title, description, keyword, horns) {
   this.image_url = image_url;
   this.title = title;
   this.description = description;
@@ -12,60 +14,81 @@ const Images = function(image_url, title, description, keyword, horns){
   this.horns = horns;
   allImages.push(this);
 };
+$('button').on('click',function(){
 
+  $('#photo-template').replaceAll();
+  if(flag === false){
+    flag = true;
+  }
+  else if(flag === true){
+    flag = false;
+  }
 
-$('select').on('click',function(){
-  let $clickedOption = $(this).val()
-  console.log('This is the clicked on',$clickedOption);
-  if($clickedOption === this.keyword){
-    $('#photo-template').show(this.image_url);
+  Images.getAllimagesFromFile();
+  renderDropDown();
+});
+
+$('select').on('click', function () {
+  let $clickedOption = $(this).val();
+  $('main > section ').hide();
+  $(`main > section img[alt=${$clickedOption}`).parent().show();
+  if($clickedOption === 'default'){
+    $('main > section ').show();
   }
 });
 
-
-Images.prototype.renderWithJq = function() {
-  const $newImage = $('<section></section>');
-  const $newOption = $('<option></option>');
-
-
-  const imageTemplateHtml = $('#photo-template').html();
-  const selectTemplateHtml = $('#myOption').html();
-
-  $newImage.html(imageTemplateHtml);
-  $newOption.html(selectTemplateHtml);
-  allImages.forEach((value, index) => {
-
-    $newOption.eq(index).html(this.keyword);
-    $newOption.eq(index).attr('value',this.keyword);
+const renderDropDown = function () {
+  const selectEl = $('select');
+  selectEl.children().each(function () {
+    this.remove();
   });
 
-  $newImage.find('h2').text(this.title);
-  $newImage.find('h3').text(this.keyword);
-  $newImage.find('img').attr('src',this.image_url);
-
-  // $newImage.find('p').text(this.description);
-  $newImage.find('.one' ).text(this.description);
-  $newImage.find('.two' ).text(this.title);
-  $newImage.find('.three' ).text(this.keyword);
-
-  $('main').append($newImage);
-  $('select').append($newOption);
+  include.forEach((value, index) => {
+    const $newOption = $('<option></option>');
+    const selectTemplateHtml = $('#myOption').html();
+    $newOption.html(selectTemplateHtml);
+    $newOption.add(index).text(value);
+    $newOption.attr('value', value);
+    $(selectEl).append($newOption);
+  });
 };
 
+Images.prototype.renderWithJq = function () {
 
+  var source   = document.getElementById('entry-template').innerHTML;
+  var template = Handlebars.compile(source);
+  var context = {title: this.title, keyword: this.keyword, description: this.description, horns: this.horns, image: this.image_url};
+  var html = template(context);
 
-Images.getAllimagesFromFile = function(){
-  const filePath = './data/page-1.json';
-  const fileType = 'json';
+  $('main').append(html);
+};
 
-  $.get(filePath,fileType).then(myImagesJSON =>{
-
-    myImagesJSON.forEach(image =>{
-      new Images(image.image_url, image.title, image.description,image.keyword, image.horns);
+Images.getAllimagesFromFile = function () {
+  console.log(flag);
+  if(flag === true){
+    filePath = './data/page-1.json';
+    fileType = 'json';
+  }
+  else if(flag === false){
+    filePath = './data/page-2.json';
+    fileType = 'json';
+  }
+  $.get(filePath, fileType).then(myImagesJSON => {
+    myImagesJSON.forEach(image => {
+      new Images(image.image_url, image.title, image.description, image.keyword, image.horns);
     });
-    allImages.forEach(image =>{
+    allImages.forEach((value, index) => {
+      imageArr.push(allImages[index].keyword);
+    });
+    include.push('default');
+    $.each(imageArr, function (value, index) {
+      if ($.inArray(index, include) === -1) include.push(index);
+    });
+    allImages.forEach(image => {
       image.renderWithJq();
     });
+    renderDropDown();
   });
-}
+};
 Images.getAllimagesFromFile();
+

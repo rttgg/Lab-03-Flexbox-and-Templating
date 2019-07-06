@@ -5,29 +5,30 @@
   <head>
     <title>The Gallery of Horns</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="./css/reset.css">
     <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/layouts.css">
-    <link rel="stylesheet" href="/css/module.css">
-    
+    <link rel="stylesheet" href="./css/layouts.css">
+    <link rel="stylesheet" href="./css/module.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
   </head>
   <body>
     <header>
       <h1>The Gallery of Horns</h1>
+      <button>More Pictures</button>
       <select>
         <option id="myOption" value="default">Filter by Keyword</option>
       </select>
     </header>
     <main>
+        <script id="entry-template" type="text/x-handlebars-template">
       <section id="photo-template">
-        <h2></h2>
-        <h3></h3>
-        <img src="" alt="">
-        <p class="one"></p>
-        <p class="two"></p>
-        <p class="three"></p>
-        
+        <h2>{{title}}</h2>
+        <h3>{{keyword}}</h3>
+        <img src={{image}} alt={{keyword}}>
+        <p class="one">{{description}}</p>
+        <p class="two">{{horns}}</p>
       </section>
+    </script>
     </main>
     <footer>
       &copy; 2018 Code Fellows
