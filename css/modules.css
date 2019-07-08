@@ -1,0 +1,16 @@
+
+.one {
+  text-align: center;
+  text-overflow: inherit;
+  
+  width: 140px; 
+  border: 1px solid lightslategray;
+}
+
+.two {
+  text-align: center;
+  text-overflow: inherit;
+  
+  width: 140px; 
+  border: 1px solid lightslategray;
+}
